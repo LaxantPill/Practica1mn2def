@@ -40,8 +40,6 @@ def sim(c, N_x, T_c, punt):
 for c in g:
  T, pas, dt = sim(c, N_x, T_c, punt=38)
 
-#Aqui configurem l'imatge estatica, primer
-
  fig, ax = plt.subplots(figsize=(8, 5))
  ax.plot(x, T[:, 0], label=r'Condició inicial ($t=0$)', linestyle='--', color='gray')
  ax.axhline(y=50, color='blue', linestyle=':', linewidth=1.5, label=r'$T=50\,^\circ\mathrm{C}$')
@@ -57,8 +55,6 @@ for c in g:
  ax.grid(alpha=0.2)
 
 
-#configurem per a que vagi a 25 frames per segon, i 100 fotogrames equiespaiats,
-#es a dir que l'animació dura 4 segons
  n_passos = T.shape[1]
  salt = max(1, n_passos // 100)
  frames = np.unique(np.append(np.arange(0, n_passos, salt), n_passos - 1))
