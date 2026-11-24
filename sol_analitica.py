@@ -57,3 +57,16 @@ T_max = T_analitica(0.5, t_a, M=3)          #sabem que per a tot t el màxim de 
 # és a dir que l'instant on s'assoleix el màxim de temperatura en l'interval [0,t_a] ha de ser t_a
 
 print(f"T màxima: {T_max:.4f}ºC a t = {t_a}")
+
+# Ara busquem l'instant en què x=0.75 cm i x=1.25 cm superen els 50 ºC per poder comparar-ho amb Crank-Nicolson
+# x=0.75 cm i x=1.25 cm són xn=0.375 i xn=0.625 (són els punts on comença la regió de teixit sa)
+
+dt = 0.0001
+t = 0
+
+while T_analitica(0.375, t, M=20) < 50 or T_analitica(0.625, t, M=20) < 50:         #aquí fem servir una M més gran, M=20, perquè la solució convergeix més ràpid per a M més grans, tot i que amb M=3 l'error de truncament ja és prou petit en comparació a l'error dels mètodes numèrics que fem servir
+    t += dt
+
+t_max = t*t_c
+
+print(f"El temps màxim que pot durar el procediment sense perjudicar el teixit sa és de t={t_max:.4f}s, ja que si superem aquest temps la regió sana sobrepassa els 50ºC.")
