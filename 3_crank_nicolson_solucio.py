@@ -1,9 +1,8 @@
-import matplotlib
-matplotlib.use('TkAgg')
-
 import matplotlib.pyplot as plt
 
-dx = 1/100
+# Constants del problema en unitats SI
+
+dx = 1/100 # m
 c_v = 3698 # J/(kg·K)
 p = 1081 # kg/m^3
 k = 0.56 # W/(m·K)
@@ -18,24 +17,6 @@ l = 0.02 # m
 T_c = s*0.5*(40**2)/k
 t_c = p*c_v*(l**2)/k
 x_c = l
-
-# Generem el vector T de l'instant inicial:
-
-const = 1
-dt = const*(dx**2)
-n = 99
-T = []
-T_0 = 36.5
-
-for i in range(n):
-  T.append(T_0/T_c)
-
-S = []
-for e in range(n):
-  if e == 0 or e == n-1:
-    S.append(dt*(1 + (T_0/T_c)/(dx**2)))
-  else:
-    S.append(dt)
 
 
 # Programem una funció que trobi la inversa d'una matriu donada pel mètode de Gauss:
@@ -61,83 +42,116 @@ def Minversa(A):
         f.append(0)
     I.append(f)
 
-  i = 0 # Comencem per la columna i = 0
-  for i in range(n): # Columna a columna
+  for i in range(n):  # Columna a columna
 
-    pivot = 0        # Definimos el tipo de variable
+    pivot = 0
     pivot_valor = 0
-    for p in range(i,n):  # Averiguamos el valor de la componente i mas grande y su pivot
-      if abs(M[p][i])>pivot_valor:
+
+    for p in range(i, n):  # Trobem la fila amb component més gran i la fem pivot
+      if abs(M[p][i]) > pivot_valor:
         pivot_valor = abs(M[p][i])
         pivot = p
 
-    if pivot != i:  # si el pivot no esta en la diagonal lo movemos
+    if pivot != i:  # Si el pivot no esta en la diagonal el movem a la diagonal
       M[i], M[pivot] = M[pivot], M[i]  # Posem el pivot a la diagonal
       I[i], I[pivot] = I[pivot], I[i]  # Apliquem el canvi a la matriu I
 
     l = pivot_valor
 
     for e in range(n):
-            M[i][e] /= l
-            I[i][e] /= l
+      M[i][e] /= l
+      I[i][e] /= l
 
     for c in range(n):
-            if c != i:
+      if c != i:
 
-                k = M[c][i]
+        k = M[c][i]
 
-                for e in range(n):
-                    M[c][e] -= M[i][e]*k
-                    I[c][e] -= I[i][e]*k
-  # for row in I:
-    #print(row)
+        for e in range(n):
+          M[c][e] -= M[i][e] * k
+          I[c][e] -= I[i][e] * k
+
   return I
 
-n = 99
-A = []
+C = [0.5,1]
 
-for i in range(n):
-  fila = []
-  for j in range(n):
-    if i == j + 1 and i >= 1:
-      fila.append(-0.5*(dt/(dx**2)))
-    elif i == j:
-      fila.append(1+(dt/(dx**2)))
-    elif i == j-1:
-      fila.append(-0.5*(dt/(dx**2)))
+# Per cada valor de C fem una simulació per separat
+
+for coef in C:
+
+  dt = coef*(dx**2)
+  n = 99
+  T = []
+  T_0 = 36.5
+
+  # Generem el vector T de l'instant inicial:
+
+  for i in range(n):
+    T.append(T_0/T_c)
+
+  # Generem el vector que es suma al vector T abans de ser multiplicat per la inversa de la matriu A
+
+  S = []
+  for e in range(n):
+    if e == 0 or e == n-1:
+      S.append(dt*(1 + (T_0/T_c)/(dx**2)))
     else:
-      fila.append(0)
-  A.append(fila)
+      S.append(dt)
 
-A_inversa = Minversa(A)
+  n = 99 # Dimensió del vector T sense els extrems a temperatura constant.
 
-B = []
+  # Generem la matriu A
 
-for i in range(n):
-  fila = []
-  for j in range(n):
-    if i == j + 1 and i >= 1:
-      fila.append(0.5*(dt/(dx**2)))
-    elif i == j:
-      fila.append(1-(dt/(dx**2)))
-    elif i == j-1:
-      fila.append(0.5*(dt/(dx**2)))
-    else:
-      fila.append(0)
-  B.append(fila)
+  A = []
 
-t = 0
+  for i in range(n):
+    fila = []
+    for j in range(n):
+      if i == j + 1 and i >= 1:
+        fila.append(-0.5*(dt/(dx**2)))
+      elif i == j:
+        fila.append(1+(dt/(dx**2)))
+      elif i == j-1:
+        fila.append(-0.5*(dt/(dx**2)))
+      else:
+        fila.append(0)
+    A.append(fila)
+
+  # Calculem la inversa de A
+
+  A_inversa = Minversa(A)
+
+  # Generem la matriu B pròpia del mètode C-N
+
+  B = []
+
+  for i in range(n):
+    fila = []
+    for j in range(n):
+      if i == j + 1 and i >= 1:
+        fila.append(0.5*(dt/(dx**2)))
+      elif i == j:
+        fila.append(1-(dt/(dx**2)))
+      elif i == j-1:
+        fila.append(0.5*(dt/(dx**2)))
+      else:
+        fila.append(0)
+    B.append(fila)
+
+  # Iterem sobre T amb A per avançar en la simulació
+
+  t = 0
 
 flag = True
 
-while t < t_a:
+while flag == True:
   T_old = []
   for temp in T:
     T_old.append(temp)
 
   bt = []
   for fila in range(n):
-    component = dt
+    component = 0
     for columna in range(n):
       component += B[fila][columna]*T_old[columna]
     bt.append(component + S[fila])
@@ -150,11 +164,13 @@ while t < t_a:
       sum += A_inversa[fila][c]*bt[c]
     T_next.append(sum)
 
-
-  T = T_next
-  t += dt
-
-
+  if T_next[35]*T_c > 50:
+    flag = False
+    T = T_old
+  else:
+    T = T_next
+    #print(t*t_c)
+    t += dt
 
 X = []
 for e in range(n+2):
@@ -168,9 +184,6 @@ for e in range(n+1):
   else:
     Tf.append(T[e] * T_c)
 
-
-
-
 fig, ax = plt.subplots()
 ax.plot(X, Tf)
 a = 0.75
@@ -180,7 +193,7 @@ ax.axhline(y=36.5, color='grey', linestyle=':')
 ax.axhline(y=50, color='green', linestyle=':')
 if max(Tf) > 80:
         ax.axhline(y=80, color='red', linestyle=':')
-plt.title(f"Crank-Nicolson, C = {const}")
+plt.title(f"Crank-Nicolson, C = {coef}")
 plt.xlabel("Posició (cm)")       # Eje X
 plt.ylabel("Temperatura (ºC)")
 fig.subplots_adjust(bottom=0.20)

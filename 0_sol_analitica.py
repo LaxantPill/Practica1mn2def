@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Constants del problema en unitats SI
 
-dx = 1/100
+dx = 1/100 # m
 c_v = 3698 # J/(kg·K)
 p = 1081 # kg/m^3
 k = 0.56 # W/(m·K)
-s = 0.472 # S / m
+s = 0.472 # S/m
 T_0 = 36.5 # C
 t_a = 0.025 # s
 t = 0 # s
