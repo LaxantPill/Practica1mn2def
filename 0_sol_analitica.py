@@ -9,7 +9,7 @@ p = 1081 # kg/m^3
 k = 0.56 # W/(m·K)
 s = 0.472 # S/m
 T_0 = 36.5 # C
-t_a = 0.025 # s
+t_a = 0.025 #temps adimensional
 t = 0 # s
 l = 0.02 # m
 
