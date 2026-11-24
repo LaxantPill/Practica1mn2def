@@ -35,7 +35,7 @@ def sim(T_0, T_c, t_c, C):
   dt = C*(0.01**2)
   steps = 0
 
-  while t < t_a:
+  while t < t_a-dt:
     steps += 1
     T_next = []
     i = 0
@@ -47,6 +47,22 @@ def sim(T_0, T_c, t_c, C):
       i += 1
     T = T_next
     t += dt
+
+  T_next = []
+
+  # Hem aturat el loop abans d'arribar a t_a, ara ajustem l'últim pas temporal per arribar a t_a amb màxima precisió.
+
+  dtt = t_a - t
+  t = t_a
+  i = 0
+  while i < 101:
+      if i == 0 or i == 100:
+          T_next.append(T_0)
+      else:
+          T_next.append(T[i] + ((T[i - 1] - 2 * T[i] + T[i + 1]) / (0.01 ** 2) + 1) * dtt)
+      i += 1
+  T = T_next
+
 
   for e in range(101):
     T[e] *= T_c

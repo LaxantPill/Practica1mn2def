@@ -144,7 +144,7 @@ for coef in C:
 
   flag = True
 
-  while t < t_a:
+  while t < t_a-dt:
     T_old = []
     for temp in T:
       T_old.append(temp)
@@ -167,6 +167,72 @@ for coef in C:
 
     T = T_next
     t += dt
+
+  # Hem aturat el loop abans d'arribar a t_a, ara ajustem l'últim pas temporal per arribar a t_a amb màxima precisió.
+
+  dtt = t_a - t
+  t = t_a
+
+  S = []
+  for e in range(n):
+    if e == 0 or e == n - 1:
+      S.append(dtt * (1 + (T_0 / T_c) / (dx ** 2)))
+    else:
+      S.append(dtt)
+
+  A = []
+
+  for i in range(n):
+    fila = []
+    for j in range(n):
+      if i == j + 1 and i >= 1:
+        fila.append(-0.5 * (dtt / (dx ** 2)))
+      elif i == j:
+        fila.append(1 + (dtt / (dx ** 2)))
+      elif i == j - 1:
+        fila.append(-0.5 * (dtt / (dx ** 2)))
+      else:
+        fila.append(0)
+    A.append(fila)
+
+  A_inversa = Minversa(A)
+
+  B = []
+
+  for i in range(n):
+    fila = []
+    for j in range(n):
+      if i == j + 1 and i >= 1:
+        fila.append(0.5 * (dtt / (dx ** 2)))
+      elif i == j:
+        fila.append(1 - (dtt / (dx ** 2)))
+      elif i == j - 1:
+        fila.append(0.5 * (dtt / (dx ** 2)))
+      else:
+        fila.append(0)
+    B.append(fila)
+
+  T_old = []
+  for temp in T:
+    T_old.append(temp)
+
+  bt = []
+  for fila in range(n):
+    component = 0
+    for columna in range(n):
+      component += B[fila][columna] * T_old[columna]
+    bt.append(component + S[fila])
+
+  T_next = []
+
+  for fila in range(n):
+    sum = 0
+    for c in range(n):
+      sum += A_inversa[fila][c] * bt[c]
+    T_next.append(sum)
+
+  T = T_next
+
 
   X = []
   for e in range(n+2):

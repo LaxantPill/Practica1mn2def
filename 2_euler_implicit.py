@@ -124,7 +124,7 @@ for coef in C:
 
     t = 0
 
-    while t < t_a:
+    while t < t_a-dt:
       B = []
 
       for e in range(n):
@@ -142,6 +142,50 @@ for coef in C:
       T = T_next
 
       t += dt
+
+    # Hem aturat el loop abans d'arribar a t_a, ara ajustem l'últim pas temporal per arribar a t_a amb màxima precisió.
+
+    dtt = t_a-t
+    t = t_a
+
+    A = []
+
+    for i in range(n):
+        fila = []
+        for j in range(n):
+            if i == j + 1 and i >= 1:
+                fila.append(-(dtt / (dx ** 2)))
+            elif i == j:
+                fila.append(1 + (dtt / (dx ** 2) * 2))
+            elif i == j - 1:
+                fila.append(-(dtt / (dx ** 2)))
+            else:
+                fila.append(0)
+        A.append(fila)
+
+    A_inversa = Minversa(A)
+
+    S = []
+    for e in range(n):
+        if e == 0 or e == n - 1:
+            S.append(dtt * (1 + (T_0 / T_c) / (dx ** 2)))
+        else:
+            S.append(dtt)
+
+    B = []
+
+    for e in range(n):
+        B.append(T[e] + S[e])
+
+    T_next = []
+
+    for f in range(n):
+        sum = 0
+        for c in range(n):
+            sum += A_inversa[f][c] * B[c]
+        T_next.append(sum)
+
+    T = T_next
 
     X = []
     for e in range(n+2):

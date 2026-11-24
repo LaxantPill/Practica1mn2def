@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 
-# Constants del problema en unitats SI
 
-dx = 1/100 # m
+n = 101
+# Constants del problema en unitats SI
+dx = 1/(n-1) # m
 c_v = 3698 # J/(kg·K)
 p = 1081 # kg/m^3
 k = 0.56 # W/(m·K)
@@ -80,33 +81,31 @@ C = [0.5,1]
 for coef in C:
 
   dt = coef*(dx**2)
-  n = 99
+  m = n-2
   T = []
   T_0 = 36.5
 
   # Generem el vector T de l'instant inicial:
 
-  for i in range(n):
+  for i in range(m):
     T.append(T_0/T_c)
 
   # Generem el vector que es suma al vector T abans de ser multiplicat per la inversa de la matriu A
 
   S = []
-  for e in range(n):
-    if e == 0 or e == n-1:
+  for e in range(m):
+    if e == 0 or e == m-1:
       S.append(dt*(1 + (T_0/T_c)/(dx**2)))
     else:
       S.append(dt)
-
-  n = 99 # Dimensió del vector T sense els extrems a temperatura constant.
 
   # Generem la matriu A
 
   A = []
 
-  for i in range(n):
+  for i in range(m):
     fila = []
-    for j in range(n):
+    for j in range(m):
       if i == j + 1 and i >= 1:
         fila.append(-0.5*(dt/(dx**2)))
       elif i == j:
@@ -125,9 +124,9 @@ for coef in C:
 
   B = []
 
-  for i in range(n):
+  for i in range(m):
     fila = []
-    for j in range(n):
+    for j in range(m):
       if i == j + 1 and i >= 1:
         fila.append(0.5*(dt/(dx**2)))
       elif i == j:
@@ -142,63 +141,61 @@ for coef in C:
 
   t = 0
 
-flag = True
+  flag = True
 
-while flag == True:
-  T_old = []
-  for temp in T:
-    T_old.append(temp)
+  while flag == True:
+    T_old = []
+    for temp in T:
+      T_old.append(temp)
 
-  bt = []
-  for fila in range(n):
-    component = 0
-    for columna in range(n):
-      component += B[fila][columna]*T_old[columna]
-    bt.append(component + S[fila])
+    bt = []
+    for fila in range(m):
+      component = 0
+      for columna in range(m):
+        component += B[fila][columna]*T_old[columna]
+      bt.append(component + S[fila])
 
-  T_next = []
+    T_next = []
 
-  for fila in range(n):
-    sum = 0
-    for c in range(n):
-      sum += A_inversa[fila][c]*bt[c]
-    T_next.append(sum)
+    for fila in range(m):
+      sum = 0
+      for c in range(m):
+        sum += A_inversa[fila][c]*bt[c]
+      T_next.append(sum)
 
-  if T_next[35]*T_c > 50:
-    flag = False
-    T = T_old
-  else:
-    T = T_next
-    #print(t*t_c)
-    t += dt
+    if T_next[int(n/(20/7))]*T_c > 50 or max(T_next)*T_c > 80:  # El punt a 0.35L no ha de superar els 50 graus Celsius
+      flag = False
+      T = T_old
+    else:
+      T = T_next
+      t += dt
 
-X = []
-for e in range(n+2):
-  X.append(2 * e/n)
+  X = []
+  for e in range(n):
+    X.append(2 * e/(n-1))
 
-Tf = [T_0]
+  Tf = [T_0]
 
-for e in range(n+1):
-  if  e == n:
-    Tf.append(T_0)
-  else:
+  for e in range(m):
     Tf.append(T[e] * T_c)
 
-fig, ax = plt.subplots()
-ax.plot(X, Tf)
-a = 0.75
-b = 1.25
-ax.axvspan(a, b, color='blue', alpha=0.2)
-ax.axhline(y=36.5, color='grey', linestyle=':')
-ax.axhline(y=50, color='green', linestyle=':')
-if max(Tf) > 80:
-        ax.axhline(y=80, color='red', linestyle=':')
-plt.title(f"Crank-Nicolson, C = {coef}")
-plt.xlabel("Posició (cm)")       # Eje X
-plt.ylabel("Temperatura (ºC)")
-fig.subplots_adjust(bottom=0.20)
-fig.text(0.5, 0.02, f"Temps final: {t * t_c:.4f} s, Temp. màx.: {max(Tf):.4f} ºC",
-             ha='center', fontsize=10)
+  Tf.append(T_0)
+
+  fig, ax = plt.subplots()
+  ax.plot(X, Tf)
+  a = 0.75
+  b = 1.25
+  ax.axvspan(a, b, color='blue', alpha=0.2)
+  ax.axhline(y=36.5, color='grey', linestyle=':')
+  ax.axhline(y=50, color='green', linestyle=':')
+  if max(Tf) > 80:
+          ax.axhline(y=80, color='red', linestyle=':')
+  plt.title(f"Crank-Nicolson, C = {coef}" )
+  plt.xlabel("Posició (cm)")       # Eje X
+  plt.ylabel("Temperatura (ºC)")
+  fig.subplots_adjust(bottom=0.20)
+  fig.text(0.5, 0.02, f"Temps final: {t * t_c:.4f} s, Temp. màx.: {max(Tf):.4f} ºC",
+               ha='center', fontsize=10)
 
 plt.show()
 

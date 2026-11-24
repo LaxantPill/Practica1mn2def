@@ -53,7 +53,7 @@ plt.xlabel("Posició (cm)")
 plt.ylabel("Temperatura (ºC)")
 plt.show()
 
-T_max = T_analitica(0.5, t_a, M=3)          #sabem que per a tot t el màxim de temperatura està al centre, x=1/2
+T_max = T_analitica(0.5, t_a, M=100)          # Sabem que per a tot t el màxim de temperatura està al centre, x=1/2
 # i que la temperatura en x=1/2 creix amb el temps fins a un límit $T_{\max}=T_0+\frac{T_c}{8}$ quan t tendeix a infinit
 # és a dir que l'instant on s'assoleix el màxim de temperatura en l'interval [0,t_a] ha de ser t_a
 
