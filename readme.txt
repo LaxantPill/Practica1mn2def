@@ -1,8 +1,3 @@
-Per poder visualitzar les gràfiques en PyCharm per Linux hem hagut de fer servir:
+AVÍS: Cal instalar Pyplot de Matplotlib per fer les gràfiques!
 
-    import matplotlib
-    matplotlib.use('TkAgg')
-
-Si feu servir un altre IDE heu de borrar aquestes dues linies.
-
-AVÍS: Cal Pyplot de Matplotlib per fer les gràfiques!
+En les carpetes hem pujat les gràfiques en format '.png' generades per cada programa '.py' .

@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -68,5 +67,5 @@ for c in g:
 ani = FuncAnimation(fig, actualitzar, frames=frames, interval=40, repeat=True)
 
 ani.save(f"animacio_c_{c}.gif", writer="pillow", fps=25)
-#ara plotegem
+
 plt.show()

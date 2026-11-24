@@ -1,9 +1,8 @@
-import matplotlib
-matplotlib.use('TkAgg')
-
 import matplotlib.pyplot as plt
 
-dx = 1/100
+# Constants del problema en unitats SI
+
+dx = 1/100 # m
 c_v = 3698 # J/(kg·K)
 p = 1081 # kg/m^3
 k = 0.56 # W/(m·K)
@@ -19,17 +18,23 @@ T_c = s*0.5*(40**2)/k
 t_c = p*c_v*(l**2)/k
 x_c = l
 
+
+# Funció per calcular T_i^j en funció de temperatures en el temps i-1
+
 def sim(T_0, T_c, t_c, C):
+
   t = 0
   t_a = 0.025
   T_i = T_0/T_c
   T_0 = T_0/T_c
   T = []
+
   for i in range(0,101):
         T.append(T_i)
-  T0 = T
+
   dt = C*(0.01**2)
   steps = 0
+
   while t < t_a:
     steps += 1
     T_next = []
@@ -43,19 +48,20 @@ def sim(T_0, T_c, t_c, C):
     T = T_next
     t += dt
 
-  for i in range(101):
-    T[i] *= T_c
+  for e in range(101):
+    T[e] *= T_c
 
   print(steps)
 
   return T, t
 
+# Generem l'eix horitzontal
+
 X = []
 for i in range(0,101):
   X.append(2*(i/100))
 
-import matplotlib.pyplot as plt
-
+# Fem plot per cada valor de C
 
 C = [0.51, 0.49, 0.25]
 for e in C:
@@ -67,7 +73,7 @@ for e in C:
     ax.axvspan(a, b, color='blue', alpha=0.2)
     ax.axhline(y=36.5, color='grey', linestyle=':')
     ax.axhline(y=50, color='green', linestyle=':')
-    if max(Tf) > 80:
+    if max(Y[0]) > 80:
         ax.axhline(y=80, color='red', linestyle=':')
     plt.title(f"Euler explícit, C = {e}")
     plt.xlabel("Posició (cm)")       # Eje X
