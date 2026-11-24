@@ -41,6 +41,12 @@ for i in range(N):
 for x in xn:
     Y.append(T_analitica(x, t_a, M=3))   #amb M=3 l'error és de l'ordre de 10^{-6}, menor a l'error dels mètodes numèrics (10^{-3})
 
+T_max = T_analitica(0.5, t_a, M=3)          #sabem que per a tot t el màxim de temperatura està al centre, x=1/2
+# i que la temperatura en x=1/2 creix amb el temps fins a un límit $T_{\max}=T_0+\frac{T_c}{8}$ quan t tendeix a infinit
+# és a dir que l'instant on s'assoleix el màxim de temperatura en l'interval [0,t_a] ha de ser t_a
+
+print(f"T màxima: {T_max:.4f}ºC a t = {t_a}")
+
 fig, ax = plt.subplots()
 ax.plot(X, Y)
 a = 0.75
@@ -53,8 +59,16 @@ plt.xlabel("Posició (cm)")
 plt.ylabel("Temperatura (ºC)")
 plt.show()
 
-T_max = T_analitica(0.5, t_a, M=100)          # Sabem que per a tot t el màxim de temperatura està al centre, x=1/2
-# i que la temperatura en x=1/2 creix amb el temps fins a un límit $T_{\max}=T_0+\frac{T_c}{8}$ quan t tendeix a infinit
-# és a dir que l'instant on s'assoleix el màxim de temperatura en l'interval [0,t_a] ha de ser t_a
+# Ara busquem l'instant en què x=0.75 cm i x=1.25 cm superen els 50 ºC per poder comparar-ho amb Crank-Nicolson
+# x=0.75 cm i x=1.25 cm són xn=0.375 i xn=0.625 (són els punts on comença la regió de teixit sa)
 
-print(f"T màxima: {T_max:.4f}ºC a t = {t_a}")
+dt = 10**(-5)
+t = 0
+
+while T_analitica(0.375, t, M=20) < 50 or T_analitica(0.625, t, M=20) < 50:         #aquí fem servir una M més gran, M=20, perquè la solució convergeix més ràpid per a M més grans, tot i que amb M=3 l'error de truncament ja és prou petit en comparació a l'error dels mètodes numèrics que fem servir
+    t += dt
+
+t_max = t*t_c
+error_t = dt*t_c          # error màxim pel pas dt (el valor real de t_max es troba entre t_max-error_t i t_max)
+
+print(f"El temps màxim que pot durar el procediment sense perjudicar el teixit sa és de t={t_max:.3f} amb un error màxim de {error_t:.3f}s, ja que si superem aquest temps la regió sana sobrepassa els 50ºC.")
