@@ -71,4 +71,4 @@ while T_analitica(0.375, t, M=20) < 50 or T_analitica(0.625, t, M=20) < 50:     
 t_max = t*t_c
 error_t = dt*t_c          # error màxim pel pas dt (el valor real de t_max es troba entre t_max-error_t i t_max)
 
-print(f"El temps màxim que pot durar el procediment sense perjudicar el teixit sa és de t={t_max:.3f} amb un error màxim de {error_t:.3f}s, ja que si superem aquest temps la regió sana sobrepassa els 50ºC.")
+print(f"El temps màxim que pot durar el procediment sense perjudicar el teixit sa és de t={t_max:.4f} amb un error màxim de {error_t:.4f}s, ja que si superem aquest temps la regió sana sobrepassa els 50ºC.")
