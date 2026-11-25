@@ -74,7 +74,7 @@ def Minversa(A):
 
   return I
 
-C = [0.5,1]
+C = [0.5, 1]
 
 # Per cada valor de C fem una simulació per separat
 
@@ -163,7 +163,7 @@ for coef in C:
         sum += A_inversa[fila][c]*bt[c]
       T_next.append(sum)
 
-    if T_next[int(n/(20/7))]*T_c > 50 or max(T_next)*T_c > 80:  # El punt a 0.35L no ha de superar els 50 graus Celsius
+    if T_next[int(n*0.375)]*T_c > 50 or max(T_next)*T_c > 80:  # El punt a 0.35L no ha de superar els 50 graus Celsius
       flag = False
       T = T_old
     else:

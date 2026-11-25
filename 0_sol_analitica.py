@@ -9,7 +9,7 @@ p = 1081 # kg/m^3
 k = 0.56 # W/(m·K)
 s = 0.472 # S/m
 T_0 = 36.5 # C
-t_a = 0.025 #temps adimensional
+t_a = 0.025 # s
 t = 0 # s
 l = 0.02 # m
 
@@ -62,7 +62,7 @@ plt.show()
 # Ara busquem l'instant en què x=0.75 cm i x=1.25 cm superen els 50 ºC per poder comparar-ho amb Crank-Nicolson
 # x=0.75 cm i x=1.25 cm són xn=0.375 i xn=0.625 (són els punts on comença la regió de teixit sa)
 
-dt = 10**(-6)
+dt = 10**(-5)
 t = 0
 
 while T_analitica(0.375, t, M=20) < 50 or T_analitica(0.625, t, M=20) < 50:         #aquí fem servir una M més gran, M=20, perquè la solució convergeix més ràpid per a M més grans, tot i que amb M=3 l'error de truncament ja és prou petit en comparació a l'error dels mètodes numèrics que fem servir
@@ -71,4 +71,4 @@ while T_analitica(0.375, t, M=20) < 50 or T_analitica(0.625, t, M=20) < 50:     
 t_max = t*t_c
 error_t = dt*t_c          # error màxim pel pas dt (el valor real de t_max es troba entre t_max-error_t i t_max)
 
-print(f"El temps màxim que pot durar el procediment sense perjudicar el teixit sa és de t={t_max:.4f} amb un error màxim de {error_t:.4f}s, ja que si superem aquest temps la regió sana sobrepassa els 50ºC.")
+print(f"El temps màxim que pot durar el procediment sense perjudicar el teixit sa és de t={t_max:.3f} amb un error màxim de {error_t:.3f}s, ja que si superem aquest temps la regió sana sobrepassa els 50ºC.")
